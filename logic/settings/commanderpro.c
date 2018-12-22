@@ -117,10 +117,18 @@ commanderpro_settings(
         }
     }
 
+    rr = dev->driver->fan.count(dev, handle, &settings.fan_ctrl);
+    msg_debug("Setting Fan\n");
     if ( flags.set_fan == 1 )
     {
         switch ( settings.fan_ctrl.mode )
         {
+        case PWM:
+            dev->driver->fan.profile.write_pwm( dev, handle, &settings.fan_ctrl );
+            break;
+        case RPM:
+            dev->driver->fan.profile.write_rpm( dev, handle, &settings.fan_ctrl );
+            break;
         case QUIET:
             dev->driver->fan.profile.write_profile_quiet( dev, handle, &settings.fan_ctrl );
             break;

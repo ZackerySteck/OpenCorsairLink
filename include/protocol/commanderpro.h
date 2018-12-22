@@ -62,6 +62,7 @@ Modes are listed in this order (shown with default values)
 "Max" (percent configuration request) (100%)
 
 */
+
 enum CorsairLightingNodePro_LED_Mode
 {
     LNP_StaticColor = 0,
@@ -93,6 +94,69 @@ enum CorsairLightingNodePro_LED_Type
     LNP_LED_LL_FAN = 0x00,
     LNP_Dominator = 0x1C,
 };
+
+enum COMMANDERPRO_Fan_Modes
+{
+    COMMANDERPRO_FixedPWM = 0x23,
+    COMMANDERPRO_FixedRPM = 0x24,
+    COMMANDERPRO_Curve = 0x25
+};
+
+#define COMMANDER_PRO_FAN_TABLE_DEFAULT( x ) \
+    x[0].temperature = 0x14;                 \
+    x[1].temperature = 0x19;                 \
+    x[2].temperature = 0x1d;                 \
+    x[3].temperature = 0x21;                 \
+    x[4].temperature = 0x25;                 \
+    x[5].temperature = 0x28;                 \
+    x[0].speed = 0x258;                      \
+    x[1].speed = 0x258;                      \
+    x[2].speed = 0x2EE;                      \
+    x[3].speed = 0x3E8;                      \
+    x[4].speed = 0x4E2;                      \
+    x[5].speed = 0x5DC;
+
+#define COMMANDER_PRO_FAN_TABLE_QUIET( x ) \
+    x[0].temperature = 0x14;               \
+    x[1].temperature = 0x19;               \
+    x[2].temperature = 0x1d;               \
+    x[3].temperature = 0x21;               \
+    x[4].temperature = 0x25;               \
+    x[5].temperature = 0x28;               \
+    x[0].speed = 0x258;                    \
+    x[1].speed = 0x258;                    \
+    x[2].speed = 0x2EE;                    \
+    x[3].speed = 0x3E8;                    \
+    x[4].speed = 0x4E2;                    \
+    x[5].speed = 0x5DC;
+
+#define COMMANDER_PRO_FAN_TABLE_BALANCED( x ) \
+    x[0].temperature = 0x14;                  \
+    x[1].temperature = 0x19;                  \
+    x[2].temperature = 0x1d;                  \
+    x[3].temperature = 0x21;                  \
+    x[4].temperature = 0x25;                  \
+    x[5].temperature = 0x28;                  \
+    x[0].speed = 0x2EE;                       \
+    x[1].speed = 0x3E8;                       \
+    x[2].speed = 0x4E2;                       \
+    x[3].speed = 0x5DC;                       \
+    x[4].speed = 0x6A4;                       \
+    x[5].speed = 0x7D0;
+
+#define COMMANDER_PRO_FAN_TABLE_PERFORMANCE( x ) \
+    x[0].temperature = 0x14;                     \
+    x[1].temperature = 0x19;                     \
+    x[2].temperature = 0x1d;                     \
+    x[3].temperature = 0x21;                     \
+    x[4].temperature = 0x25;                     \
+    x[5].temperature = 0x28;                     \
+    x[0].speed = 0x3E8;                          \
+    x[1].speed = 0x4E2;                          \
+    x[2].speed = 0x5DC;                          \
+    x[3].speed = 0x6A4;                          \
+    x[4].speed = 0x7D0;                          \
+    x[5].speed = 0x9C4;
 
 int
 corsairlink_commanderpro_device_id(
@@ -146,6 +210,12 @@ corsairlink_commanderpro_fan_print_mode(
     uint8_t mode, uint16_t data, char* modestr, uint8_t modestr_size );
 
 int
+corsairlink_commanderpro_fan_count(
+    struct corsair_device_info* dev,
+    struct libusb_device_handle* handle,
+    struct fan_control* ctrl);
+
+int
 corsairlink_commanderpro_get_fan_speed_rpm(
     struct corsair_device_info* dev,
     struct libusb_device_handle* handle,
@@ -177,6 +247,30 @@ corsairlink_commanderpro_set_fan_speed_pwm(
 
 int
 corsairlink_commanderpro_set_fan_speed_rpm(
+    struct corsair_device_info* dev,
+    struct libusb_device_handle* handle,
+    struct fan_control* ctrl );
+
+int
+corsairlink_commanderpro_fan_mode_default(
+    struct corsair_device_info* dev,
+    struct libusb_device_handle* handle,
+    struct fan_control* ctrl );
+
+int
+corsairlink_commanderpro_fan_mode_quiet(
+    struct corsair_device_info* dev,
+    struct libusb_device_handle* handle,
+    struct fan_control* ctrl );
+
+int
+corsairlink_commanderpro_fan_mode_balanced(
+    struct corsair_device_info* dev,
+    struct libusb_device_handle* handle,
+    struct fan_control* ctrl );
+
+int
+corsairlink_commanderpro_fan_mode_performance(
     struct corsair_device_info* dev,
     struct libusb_device_handle* handle,
     struct fan_control* ctrl );

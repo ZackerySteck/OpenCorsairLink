@@ -30,6 +30,52 @@
 #include <unistd.h>
 
 int
+corsairlink_commanderpro_fan_count(
+    struct corsair_device_info* dev,
+    struct libusb_device_handle* handle,
+    struct fan_control* ctrl)
+{
+    int rr;
+    uint8_t response[16];
+    uint8_t commands[64];
+    int connected;
+
+    for(int ii = 1; ii <=6; ++ii)
+    {   
+        memset( response, 0, sizeof( response ) );
+        memset( commands, 0, sizeof( commands ) );
+
+        commands[0] = 0x20;
+        commands[1] = ii;
+
+        rr = dev->driver->write( handle, dev->write_endpoint, commands, 14 );
+        rr = dev->driver->read( handle, dev->read_endpoint, response, 32 );
+        msg_debug2( "Fan %d: ", ii);
+        switch ( response[ii] )
+        {
+        case 0x00:
+            msg_debug2( "Auto/Disconnected\n" );
+            break;
+        case 0x01:
+            msg_debug2( "3-Pin\n" );
+            connected++;
+            break;
+        case 0x02:
+            msg_debug2( "4-Pin\n" );
+            connected++;
+            break;
+        case 0x03:
+            msg_debug2( "Unknown\n" );
+            break;
+        default:
+            msg_debug2( "Impossible!\n" );
+        }
+    }
+    msg_info("%d Fans Connected\n", connected);
+    return rr;
+}
+
+int
 corsairlink_commanderpro_fan_print_mode(
     uint8_t mode, uint16_t data, char* modestr, uint8_t modestr_size )
 {
@@ -133,7 +179,7 @@ corsairlink_commanderpro_set_fan_speed_pwm(
     memset( response, 0, sizeof( response ) );
     memset( commands, 0, sizeof( commands ) );
 
-    commands[0] = 0x23;
+    commands[0] = COMMANDERPRO_FixedPWM;
     commands[1] = ctrl->channel;
     commands[2] = ctrl->speed_pwm;
 
@@ -153,7 +199,7 @@ corsairlink_commanderpro_set_fan_speed_rpm(
     memset( response, 0, sizeof( response ) );
     memset( commands, 0, sizeof( commands ) );
 
-    commands[0] = 0x24;
+    commands[0] = COMMANDERPRO_FixedRPM;
     commands[1] = ctrl->channel;
     commands[2] = ctrl->speed_rpm >> 8;
     commands[3] = ctrl->speed_rpm & 0xff;
@@ -193,7 +239,7 @@ corsairlink_commanderpro_set_fan_curve(
     memset( response, 0, sizeof( response ) );
     memset( commands, 0, sizeof( commands ) );
 
-    commands[0] = 0x25;
+    commands[0] = COMMANDERPRO_Curve;
     commands[1] = ctrl->channel;
     commands[2] = 0x00; // 0x00 = CP Temp Probe 1 .... 0x03 = CP Temp Probe 4,
                         // 0xff = External
@@ -299,4 +345,43 @@ corsairlink_commanderpro_set_fan_connection_mode(
     rr = dev->driver->read( handle, dev->read_endpoint, response, 32 );
 
     return rr;
+}
+
+// int
+// corsairlink_commanderpro_fan_max(
+//     struct corsair_device_info* dev, struct libusb_device_handle* handle, struct fan_control* ctrl )
+// {
+//     return corsairlink_commanderpro_fan_fixed_percent
+// }
+
+int
+corsairlink_commanderpro_fan_mode_default(
+    struct corsair_device_info* dev, struct libusb_device_handle* handle, struct fan_control* ctrl )
+{
+    COMMANDER_PRO_FAN_TABLE_DEFAULT(ctrl->table);
+    return corsairlink_commanderpro_set_fan_curve(dev, handle, ctrl);
+}
+
+int
+corsairlink_commanderpro_fan_mode_quiet(
+    struct corsair_device_info* dev, struct libusb_device_handle* handle, struct fan_control* ctrl )
+{
+    COMMANDER_PRO_FAN_TABLE_QUIET(ctrl->table);
+    return corsairlink_commanderpro_set_fan_curve(dev, handle, ctrl);
+}
+
+int
+corsairlink_commanderpro_fan_mode_balanced(
+    struct corsair_device_info* dev, struct libusb_device_handle* handle, struct fan_control* ctrl )
+{
+    COMMANDER_PRO_FAN_TABLE_BALANCED(ctrl->table);
+    return corsairlink_commanderpro_set_fan_curve(dev, handle, ctrl);
+}
+
+int
+corsairlink_commanderpro_fan_mode_performance(
+    struct corsair_device_info* dev, struct libusb_device_handle* handle, struct fan_control* ctrl )
+{
+    COMMANDER_PRO_FAN_TABLE_PERFORMANCE(ctrl->table);
+    return corsairlink_commanderpro_set_fan_curve(dev, handle, ctrl);
 }
