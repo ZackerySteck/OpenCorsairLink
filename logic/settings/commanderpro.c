@@ -118,6 +118,7 @@ commanderpro_settings(
     }
 
     rr = dev->driver->fan.count(dev, handle, &settings.fan_ctrl);
+    msg_info("%d Fans Connected\n", settings.fan_ctrl.fan_count);
     msg_debug("Setting Fan\n");
     if ( flags.set_fan == 1 )
     {

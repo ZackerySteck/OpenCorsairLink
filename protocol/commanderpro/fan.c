@@ -38,7 +38,7 @@ corsairlink_commanderpro_fan_count(
     int rr;
     uint8_t response[16];
     uint8_t commands[64];
-    int connected;
+    uint8_t fan_count = 0;
 
     for(int ii = 1; ii <=6; ++ii)
     {   
@@ -58,11 +58,11 @@ corsairlink_commanderpro_fan_count(
             break;
         case 0x01:
             msg_debug2( "3-Pin\n" );
-            connected++;
+            fan_count++;
             break;
         case 0x02:
             msg_debug2( "4-Pin\n" );
-            connected++;
+            fan_count++;
             break;
         case 0x03:
             msg_debug2( "Unknown\n" );
@@ -71,7 +71,7 @@ corsairlink_commanderpro_fan_count(
             msg_debug2( "Impossible!\n" );
         }
     }
-    msg_info("%d Fans Connected\n", connected);
+    ctrl->fan_count = fan_count;
     return rr;
 }
 
