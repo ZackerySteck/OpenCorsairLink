@@ -116,9 +116,25 @@ commanderpro_settings(
             break;
         }
     }
-    msg_info("Querying fans...\n");
-    rr = dev->driver->fan.count(dev, handle, &settings.fan_ctrl);
-    msg_info("%d Fans Connected\n", settings.fan_ctrl.fan_count);
+    // msg_info("Querying fans...\n");
+    // rr = dev->driver->fan.count(dev, handle, &settings.fan_ctrl);
+    // msg_info("%d Fans Connected\n", settings.fan_ctrl.fan_count);
+    // for ( ii = 0; ii < settings.fan_ctrl.fan_count; ii++ )
+    // {
+    //     settings.fan_ctrl.channel = ii;
+        
+    //     rr = dev->driver->fan.profile.read_profile( dev, handle, &settings.fan_ctrl );
+    //     rr = dev->driver->fan.print_mode(
+    //         settings.fan_ctrl.mode, settings.fan_ctrl.data, settings.fan_ctrl.mode_string,
+    //         sizeof( settings.fan_ctrl.mode_string ) );
+    //     rr = dev->driver->fan.speed( dev, handle, &settings.fan_ctrl );
+    //     rr = dev->driver->fan.profile.read_pwm( dev, handle, &settings.fan_ctrl );
+    //     msg_info("%d\n", settings.fan_ctrl.speed_pwm);
+    //     msg_info( "Fan %d:\t%s\n", ii, settings.fan_ctrl.mode_string );
+    //     msg_info(
+    //         "\tCurrent/Max Speed %i/%.2f RPM\n", settings.fan_ctrl.speed_rpm,
+    //         (settings.fan_ctrl.speed_rpm / (settings.fan_ctrl.speed_pwm / 100.0)) );
+    // }
     msg_debug("Setting Fan\n");
     if ( flags.set_fan == 1 )
     {

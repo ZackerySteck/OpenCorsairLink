@@ -50,26 +50,7 @@ corsairlink_commanderpro_fan_count(
 
         rr = dev->driver->write( handle, dev->write_endpoint, commands, 14 );
         rr = dev->driver->read( handle, dev->read_endpoint, response, 32 );
-        msg_debug2( "Fan %d: ", ii);
-        switch ( response[ii] )
-        {
-        case 0x00:
-            msg_debug2( "Auto/Disconnected\n" );
-            break;
-        case 0x01:
-            msg_debug2( "3-Pin\n" );
-            fan_count++;
-            break;
-        case 0x02:
-            msg_debug2( "4-Pin\n" );
-            fan_count++;
-            break;
-        case 0x03:
-            msg_debug2( "Unknown\n" );
-            break;
-        default:
-            msg_debug2( "Impossible!\n" );
-        }
+        if(response[ii] == 0x01 || response[ii] == 0x02) fan_count++;
     }
     ctrl->fan_count = fan_count;
     return rr;
