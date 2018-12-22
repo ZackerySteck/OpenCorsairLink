@@ -79,8 +79,12 @@ corsairlink_commanderpro_temperature(
     rr = dev->driver->write( handle, dev->write_endpoint, commands, 16 );
     rr = dev->driver->read( handle, dev->read_endpoint, response, 16 );
 
+    uint8_t tmp[2];
+    tmp[0] = response[2];
+    tmp[1] = response[1];
+
     uint16_t data;
-    memcpy( &data, response + 1, 2 );
+    memcpy( &data, tmp, 2 );
     *( temperature ) = (double)data / 100;
     // snprintf(temperature, temperature_str_len, "%5.2f C", (double)data/100);
 
